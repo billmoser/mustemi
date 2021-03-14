@@ -142,8 +142,10 @@ console.log('ex 5:', result)
 Here's a simple example of using the package to output MIDI for consumption
 by a DAW or some other MIDI-aware sound engine such as Kontakt Player.  This
 uses a few basic midi utilities in the *examples* directory of this package.
-Your OS will need to have a way to open a virtual MIDI device.  On the platform I'm using, Windows 10, this is made possible by using a 3rd-party
-tool such as the one I use:
+If you check out this repo so that you can run these MIDI
+examples, you'll need to install the 'midi' package.  It's not listed as a devDependency in package.json,
+because travis-ci can't handle it (it requires a C code-build step).
+Also, your OS will need to have a way to open a virtual MIDI device.  On the platform I'm using, Windows 10, this is made possible by using a 3rd-party tool such as the one I use:
  [LoopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
 ```javascript
 import midi from 'midi'
