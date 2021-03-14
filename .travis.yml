@@ -1,0 +1,32 @@
+#######################################################################
+#
+# language section
+#
+language: node_js
+node_js: 
+  - 14
+
+#######################################################################
+#
+# ci run
+#
+before_install:
+  - npm install -g codecov  # needed only for codecov.io
+
+script:
+  - npm run docs  # needed only for document generation
+  - npm test # needed for basic travis build (otherwise, why bother)
+  - codecov  # needed only for codecov.io
+
+#######################################################################
+#
+# this sectiion is for deployment of the generated
+# documentation to github pages
+#
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: ./docs
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: main

@@ -1,0 +1,5 @@
+in git bash, need to do this (.exe extension) in order to redirect output to file:
+node.exe example.js > example.out
+
+docs are at:
+file:///C:/Users/billm/Desktop/git/bitbucket/misc/node-stuff/music-theory/docs/index.html

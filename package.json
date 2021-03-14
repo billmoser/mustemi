@@ -1,0 +1,46 @@
+{
+    "name": "mustemi",
+    "version": "1.0.0-1",
+    "description": "Music theory for MIDI applications",
+    "keywords": [
+        "music theory",
+        "midi",
+        "scale degrees",
+        "nashville number system",
+        "chords",
+        "javascript",
+        "node",
+        "browser",
+        "es6",
+        "es2015"
+    ],
+    "author": "Bill Moser",
+    "license": "MIT",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "gitdown": "gitdown ./.README.md --output-file ./README.md",
+        "predocs": "rm -rf docs",
+        "docs": "jsdoc --configure .jsdoc.json --verbose",
+        "complexity": "eslint index.js src/*.js test/**/*.js",
+        "style": "standard index.js src/*.js test/**/*js",
+        "pretest": "npm run complexity && npm run style",
+        "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/billmoser/mustemi.git"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "docdash": "^1.2.0",
+        "eslint": "^7.22.0",
+        "examples-plugin-jsdoc": "^1.0.3",
+        "gitdown": "^3.1.4",
+        "jest": "^26.6.3",
+        "jsdoc": "^3.6.6",
+        "midi": "^1.0.0",
+        "standard": "^16.0.3"
+    }
+}
