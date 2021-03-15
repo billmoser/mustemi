@@ -16,7 +16,6 @@ mu.showDevices()
 const port = new midi.Output()
 port.openPort(1)
 
-
 /*
  * Set up to read midi note-on messages from the input device, 
  * and write the transformation (notes object) to the output device
@@ -39,8 +38,10 @@ input.on('message', (deltaTime, message) => {
      * the notes will take the input degrees, and shift them so that
      * the root is the midiNoteNumber
      */
-    let notes = chords.degreesToMidi(degrees, {shift: midiNoteNumber, defaultOctave: 0})
-    mu.play(port, notes, {...opts, velocity: message[2], text: 'MIDI note ' + midiNoteNumber})
+    let notes = chords.degreesToMidi(degrees,
+      {shift: midiNoteNumber, defaultOctave: 0})
+    mu.play(port, notes, {...opts, velocity: message[2],
+      text: 'MIDI note ' + midiNoteNumber})
   }
 });
  
