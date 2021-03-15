@@ -2,7 +2,8 @@ import { core } from '../index.js' // you should use: from 'mustemi'
 
 let result
 
-// Set middle C octave.  By default this is 4, but your setup might require it to be 3
+// Set middle C octave.  By default this is 4, but your setup
+// might require it to be 3
 //core.setOrigin(3)
 
 // Chromatic numbers of the major scale

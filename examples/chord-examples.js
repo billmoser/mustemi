@@ -32,8 +32,9 @@ console.log('ex 5:', result)
 // Most common chord types are supported.
 result = Object.keys(chords.chordDegrees)
 console.log('ex 6:', result)
-// <= [ '7', '', 'M', 'Dom', 'm', '+', 'b5', 'dim', 'aug', 'sus4', 'sus2', 'M6',
-//      'm6', 'Dom7', 'M7', 'm7', 'mM7', '+7', '+M7', 'dim7', '7b5', 'm7b5', 'add9' ]
+// <= [ '7', '', 'M', 'Dom', 'm', '+', 'b5', 'dim', 'aug', 'sus4', 'sus2',
+//      'M6', 'm6', 'Dom7', 'M7', 'm7', 'mM7', '+7', '+M7', 'dim7', '7b5',
+//      'm7b5', 'add9' ]
 
 // If you don't find the one you want, or just want to introduce a
 // shorthand for a particular type of chord, just add it
