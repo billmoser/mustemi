@@ -2,7 +2,7 @@ import { chords } from '../index.js' // you should use: from 'mustemi'
 
 let result
 
-// This produces all 12 chromatics using node names rather than scale degrees
+// This produces all 12 chromatics using note names rather than scale degrees
 let notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 result = chords.notesToMidi(notes)
 console.log('ex 1:', result)
