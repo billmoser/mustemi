@@ -69,7 +69,7 @@ function setOrigin (octave) {
  *                          shift=origin.shift}
  * @param {string=} options.scale name of scale to use
  * @param {number=}    options.octave default octave for notes with no designation
- * @param {numner=}    options.shift an integer used to shift the value up or down
+ * @param {number=}    options.shift an integer used to shift the value up or down
  *                          on the number line
  * @returns {number} the chromatic number
  * @static
