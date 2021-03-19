@@ -54,66 +54,6 @@ const nashvilleChordTypes = {
 }
 
 /**
- * Parses the octave from a note or degree specification such as 'C#:3'
- * or '1:5' into an object.
- * @param {string|number} spec <note name|degree>[:<octave>]
- * @param {number=} defaultOctave octave to assume if none specified
- * @returns {Object} *name*: the note name or degree number, and the
- *  *octave*
- * @static
- */
-function parseOctave (spec, defaultOctave) {
-  const arr = ('' + spec).split(':')
-  return {
-    name: arr[0],
-    octave: (arr[1] === undefined) ? defaultOctave : parseInt(arr[1])
-  }
-}
-
-/**
- * Parses a chord specification such as 'C#7b5:3' into an object
- * @param {string}  spec <note name>[<chord type>][:<octave>]
- * @param {number=} defaultOctave default octave
- * @returns {Object} *note*: the name of the note, eg 'C#'; *type*:
- * the chord type, eg '7b5'; and the chord's *octave*
- * @static
- */
-function parseChord (spec, defaultOctave) {
-  const { name, octave } = parseOctave(spec, defaultOctave)
-  const idx = ('b#'.indexOf(name.charAt(1)) >= 0) ? 2 : 1
-  return {
-    note: name.substring(0, idx), // e.g. 'C#'
-    type: name.substring(idx), // e.g. '7b5'
-    octave: octave
-  }
-}
-
-/**
- * Parse a nashville chord specification such as '1', or '2^M7:3',
- * or even '#bb##2^dim:5'
- * @param {Object} options options
- * @param {string} options.spec <degree>[^<chord type>][:<octave>]
- * @param {number=} options.defaultOctave default octave
- * @param {string=} options.scale scale to use
- * @returns {Object} *nashvilleNumber*: the chord number; *offset*: number
- *   of half-stepsfrom the chord number determined by the leading sharp/flat
- *   designators; *type*: the chord type, eg '7b5', and the chord's *octave*
- * @static
- */
-function parseNashvilleChord ({ spec, defaultOctave, scale }) {
-  const { name, octave } = parseOctave(spec, defaultOctave)
-  const arr = name.split('^')
-  const { base, offset } = utils.resolveQualifiers(arr[0])
-  const nashvilleNumber = base
-  return {
-    nashvilleNumber: nashvilleNumber,
-    offset: offset,
-    type: arr[1] || nashvilleChordTypes[scale][nashvilleNumber - 1],
-    octave: octave
-  }
-}
-
-/**
  * What are the MIDI note numbers for the *degrees*?
  * @param {Array.<(string|number)>} degrees list of scale degrees
  * @param {Object} options {octave(default octave), shift(where is middle C)}
@@ -125,9 +65,10 @@ function degreesToMidi (degrees,
   //
   const rootIdx = utils.noteIndex(root)
   const result = []
-  for (const degree of degrees) {
-    const { name, octave } = parseOctave(degree, defaultOctave)
-    result.push(core.chromatic(name, { scale: scale, octave: octave, shift: shift + rootIdx }))
+  for (const spec of degrees) {
+    let { degree, octave } = utils.parseDegree(spec) // eslint-disable-line
+    octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+    result.push(core.chromatic(degree, { scale, octave, shift: shift + rootIdx }))
   }
   return result
 }
@@ -141,11 +82,12 @@ function degreesToMidi (degrees,
  */
 function notesToMidi (notes, { defaultOctave } = {}) {
   const result = []
-  for (const note of notes) {
-    const { name, octave } = parseOctave(note, defaultOctave)
-    const degree = utils.noteIndex(name) + 1
+  for (const spec of notes) {
+    let { note, octave } = utils.parseNote(spec) // eslint-disable-line
+    octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+    const degree = utils.noteIndex(note) + 1
     const scale = 'Chromatic'
-    result.push(core.chromatic(degree, { scale: scale, octave: octave }))
+    result.push(core.chromatic(degree, { scale, octave }))
   }
   return result
 }
@@ -159,10 +101,11 @@ function notesToMidi (notes, { defaultOctave } = {}) {
  * @static
  */
 function chordToMidi ({ name, scale, defaultOctave }) {
-  const { note, type, octave } = parseChord(name, defaultOctave)
+  let { note, type, octave } = utils.parseChord(name) // eslint-disable-line
+  octave = (octave === undefined) ? defaultOctave : parseInt(octave)
   const shift = core.origin.shift + utils.noteIndex(note)
-  const degrees = chordDegrees[type] // relative to major scale
-  const result = core.chromatics(degrees, { scale: scale, octave: octave, shift: shift })
+  const degrees = chordDegrees[type || ''] // relative to major scale
+  const result = core.chromatics(degrees, { scale, octave, shift })
   return result
 }
 
@@ -174,23 +117,21 @@ function chordToMidi ({ name, scale, defaultOctave }) {
  * @static
  */
 function nashvilleToMidi ({ name, key = 'C', defaultOctave, scale = 'M7' }) {
-  const { nashvilleNumber, offset, type, octave } =
-    parseNashvilleChord({ spec: name, defaultOctave, scale })
-  const degrees = chordDegrees[type] // relative to major scale
+  // eslint-disable-next-line
+  let { nashNum, offset, type, octave } = utils.parseNashvilleChord(name)
+  octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+  type = type || nashvilleChordTypes[scale][nashNum - 1]
+  // relative to major scale
+  const degrees = chordDegrees[type]
   // will shift all degrees by nashNum's chromatic degree
   const shift = core.origin.shift + utils.noteIndex(key) +
-    core.chromatic(nashvilleNumber, { octave: 0, shift: 0 }) + offset
-  const result = core.chromatics(
-    degrees,
-    { scale: 'Ionian', octave: octave, shift: shift })
+    core.chromatic(nashNum, { octave: 0, shift: 0 }) + offset
+  const result = core.chromatics(degrees, { scale: 'Ionian', octave, shift })
   return result
 }
 
 export {
   chordDegrees,
-  parseOctave,
-  parseChord,
-  parseNashvilleChord,
   degreesToMidi,
   notesToMidi,
   chordToMidi,

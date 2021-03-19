@@ -3,7 +3,7 @@ module.exports = function f (chords) {
     notesToMidi: [
       {
         code: () => {
-          const result = chords.notesToMidi(['C', 'C#', 'D'])
+          const result = chords.notesToMidi(['C', 'C#:4', 'D'])
           return result // skip
         },
         expect: [60, 61, 62]
@@ -19,7 +19,7 @@ module.exports = function f (chords) {
     degreesToMidi: [
       {
         code: () => {
-          const result = chords.degreesToMidi([1, 'b2', 2])
+          const result = chords.degreesToMidi([1, 'b2:4', 2])
           return result // skip
         },
         expect: [60, 61, 62]
@@ -39,7 +39,13 @@ module.exports = function f (chords) {
     chordToMidi: [
       {
         code: () => {
-          const result = chords.chordToMidi({ name: 'CM7' })
+          const result = chords.chordToMidi({ name: 'C' })
+          return result // skip
+        },
+        expect: [60, 64, 67]
+      }, {
+        code: () => {
+          const result = chords.chordToMidi({ name: 'CM7:4' })
           return result // skip
         },
         expect: [60, 64, 67, 71]

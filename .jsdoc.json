@@ -5,7 +5,6 @@
     },
     "source": {
         "include": [ "README.md", "src" ],
-        "exclude": ["src/utils.js"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs)"
     },
