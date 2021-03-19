@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>chords.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-chords.html">chords</a><ul class='members'><li data-type='member'><a href="module-chords.html#.chordDegrees">chordDegrees</a></li><li data-type='member'><a href="module-chords.html#.nashvilleChordTypes">nashvilleChordTypes</a></li></ul><ul class='methods'><li data-type='method'><a href="module-chords.html#.chordToMidi">chordToMidi</a></li><li data-type='method'><a href="module-chords.html#.degreesToMidi">degreesToMidi</a></li><li data-type='method'><a href="module-chords.html#.nashvilleToMidi">nashvilleToMidi</a></li><li data-type='method'><a href="module-chords.html#.notesToMidi">notesToMidi</a></li></ul></li><li><a href="module-core.html">core</a><ul class='members'><li data-type='member'><a href="module-core.html#.numChromatics">numChromatics</a></li><li data-type='member'><a href="module-core.html#.origin">origin</a></li><li data-type='member'><a href="module-core.html#.scaleChromatics">scaleChromatics</a></li></ul><ul class='methods'><li data-type='method'><a href="module-core.html#.addScale">addScale</a></li><li data-type='method'><a href="module-core.html#.chromatic">chromatic</a></li><li data-type='method'><a href="module-core.html#.chromatics">chromatics</a></li><li data-type='method'><a href="module-core.html#.setOrigin">setOrigin</a></li></ul></li><li><a href="module-utils.html">utils</a><ul class='methods'><li data-type='method'><a href="module-utils.html#.noteIndex">noteIndex</a></li><li data-type='method'><a href="module-utils.html#.parseChord">parseChord</a></li><li data-type='method'><a href="module-utils.html#.parseDegree">parseDegree</a></li><li data-type='method'><a href="module-utils.html#.parseNashvilleChord">parseNashvilleChord</a></li><li data-type='method'><a href="module-utils.html#.parseNote">parseNote</a></li><li data-type='method'><a href="module-utils.html#.resolveQualifiers">resolveQualifiers</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">chords.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This module provides functions for producing lists of MIDI note
+ * numbers from scale degrees, note names, or nashville numbers.
+ * @module chords
+ * @examples test/data/examples/chords-examples.js
+ */
+
+import * as core from './core.js'
+import * as utils from './utils.js'
+
+/**
+ * degrees for each type relative to major scale, user can add more
+ * @type {Object(string, Array.&lt;(string|number)>)}
+ * @static
+ */
+const chordDegrees = {
+  '': [1, 3, 5], // major chord doean't require a designation
+  M: [1, 3, 5],
+  Dom: [1, 3, 5],
+  m: [1, 'b3', 5],
+  '+': [1, 3, '#5'],
+  b5: [1, 3, 'b5'],
+  dim: [1, 'b3', 'b5'],
+  aug: [1, '3', '#5'],
+  sus4: [1, 4, 5],
+  sus2: [1, 2, 5],
+  M6: [1, 3, 5, 6],
+  m6: [1, 'b3', 5, 6],
+  7: [1, 3, 5, 'b7'],
+  Dom7: [1, 3, 5, 'b7'],
+  M7: [1, 3, 5, 7],
+  m7: [1, 'b3', 5, 'b7'],
+  mM7: [1, 'b3', 5, 7],
+  '+7': [1, 3, '#5', 'b7'], // augmented 7th chord, aka augmented minor 7th chord
+  '+M7': [1, 3, '#5', 7], // augmented major 7th chord
+  dim7: [1, 'b3', 'b5', 6],
+  '7b5': [1, 3, 'b5', 'b7'],
+  m7b5: [1, 'b3', 'b5', 'b7'],
+  add9: [1, 3, 5, 9]
+}
+
+/**
+ * triad and 7th types for major and minor scales
+ * @type {Object(string, string[])}
+ * @static
+ */
+const nashvilleChordTypes = {
+  M: ['M', 'm', 'm', 'M', 'M', 'm', 'dim'],
+  m: ['m', 'dim', 'M', 'm', 'm', 'M', 'M'],
+  hm: ['m', 'dim', 'aug', 'm', 'M', 'M', 'dim'],
+  M7: ['M7', 'm7', 'm7', 'M7', '7', 'm7', 'm7b5'],
+  m7: ['m7', 'm7b5', 'M7', 'm7', 'm7', 'M7', '7'],
+  hm7: ['mM7', 'm7b5', '+7', 'm7', '7', 'M7', 'dim7']
+}
+
+/**
+ * What are the MIDI note numbers for the *degrees*?
+ * @param {Array.&lt;(string|number)>} degrees list of scale degrees
+ * @param {Object} options {octave(default octave), shift(where is middle C)}
+ * @returns {number[]} array of MIDI note numbers for *degrees*
+ * @static
+ */
+function degreesToMidi (degrees,
+  { root = 'C', scale, defaultOctave, shift = core.origin.shift } = {}) {
+  //
+  const rootIdx = utils.noteIndex(root)
+  const result = []
+  for (const spec of degrees) {
+    let { degree, octave } = utils.parseDegree(spec) // eslint-disable-line
+    octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+    result.push(core.chromatic(degree, { scale, octave, shift: shift + rootIdx }))
+  }
+  return result
+}
+
+/**
+ * What are the MIDI note numbers for the list of *notes*?
+ * @param {string[]} notes
+ * @param {Object=} options {octave(default octave), shift(where is middle C)}
+ * @returns {number[]} array of MIDI note numbers
+ * @static
+ */
+function notesToMidi (notes, { defaultOctave } = {}) {
+  const result = []
+  for (const spec of notes) {
+    let { note, octave } = utils.parseNote(spec) // eslint-disable-line
+    octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+    const degree = utils.noteIndex(note) + 1
+    const scale = 'Chromatic'
+    result.push(core.chromatic(degree, { scale, octave }))
+  }
+  return result
+}
+
+/**
+ * What are the MIDI note numbers for the *name*d chord (such as 'C#7b5',
+ * or 'BM7:3')?
+ * @param {Object=} options { name = &lt;chord name>, scale = 'Ionian',
+ *   defaultOctave = origin.octave }
+ * @returns {number[]} array of MIDI note numbers
+ * @static
+ */
+function chordToMidi ({ name, scale, defaultOctave }) {
+  let { note, type, octave } = utils.parseChord(name) // eslint-disable-line
+  octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+  const shift = core.origin.shift + utils.noteIndex(note)
+  const degrees = chordDegrees[type || ''] // relative to major scale
+  const result = core.chromatics(degrees, { scale, octave, shift })
+  return result
+}
+
+/**
+ * What are the MIDI note numbers for the *name*d Nashville chord
+ * (such as '1', '4^7:3')?
+ * @param {Object} options  { name = &lt;chord name>, key = 'C', scale = 'M7' }
+ * @returns {number[]} array of MIDI note numbers
+ * @static
+ */
+function nashvilleToMidi ({ name, key = 'C', defaultOctave, scale = 'M7' }) {
+  // eslint-disable-next-line
+  let { nashNum, offset, type, octave } = utils.parseNashvilleChord(name)
+  octave = (octave === undefined) ? defaultOctave : parseInt(octave)
+  type = type || nashvilleChordTypes[scale][nashNum - 1]
+  // relative to major scale
+  const degrees = chordDegrees[type]
+  // will shift all degrees by nashNum's chromatic degree
+  const shift = core.origin.shift + utils.noteIndex(key) +
+    core.chromatic(nashNum, { octave: 0, shift: 0 }) + offset
+  const result = core.chromatics(degrees, { scale: 'Ionian', octave, shift })
+  return result
+}
+
+export {
+  chordDegrees,
+  degreesToMidi,
+  notesToMidi,
+  chordToMidi,
+  nashvilleToMidi
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Mar 19 2021 22:45:20 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

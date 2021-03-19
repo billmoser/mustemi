@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>core.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-chords.html">chords</a><ul class='members'><li data-type='member'><a href="module-chords.html#.chordDegrees">chordDegrees</a></li><li data-type='member'><a href="module-chords.html#.nashvilleChordTypes">nashvilleChordTypes</a></li></ul><ul class='methods'><li data-type='method'><a href="module-chords.html#.chordToMidi">chordToMidi</a></li><li data-type='method'><a href="module-chords.html#.degreesToMidi">degreesToMidi</a></li><li data-type='method'><a href="module-chords.html#.nashvilleToMidi">nashvilleToMidi</a></li><li data-type='method'><a href="module-chords.html#.notesToMidi">notesToMidi</a></li></ul></li><li><a href="module-core.html">core</a><ul class='members'><li data-type='member'><a href="module-core.html#.numChromatics">numChromatics</a></li><li data-type='member'><a href="module-core.html#.origin">origin</a></li><li data-type='member'><a href="module-core.html#.scaleChromatics">scaleChromatics</a></li></ul><ul class='methods'><li data-type='method'><a href="module-core.html#.addScale">addScale</a></li><li data-type='method'><a href="module-core.html#.chromatic">chromatic</a></li><li data-type='method'><a href="module-core.html#.chromatics">chromatics</a></li><li data-type='method'><a href="module-core.html#.setOrigin">setOrigin</a></li></ul></li><li><a href="module-utils.html">utils</a><ul class='methods'><li data-type='method'><a href="module-utils.html#.noteIndex">noteIndex</a></li><li data-type='method'><a href="module-utils.html#.parseChord">parseChord</a></li><li data-type='method'><a href="module-utils.html#.parseDegree">parseDegree</a></li><li data-type='method'><a href="module-utils.html#.parseNashvilleChord">parseNashvilleChord</a></li><li data-type='method'><a href="module-utils.html#.parseNote">parseNote</a></li><li data-type='method'><a href="module-utils.html#.resolveQualifiers">resolveQualifiers</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">core.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This module provides functions to map scale degrees to chromatic numbers
+ * suitable for MIDI use.  A few basic scales are provided as well (modes of
+ * the major scale, as well as the harmonic minor scale).  You may add other
+ * scales you need to the *scaleChromatics* map at runtime.
+ * @module core
+ * @examples test/data/examples/core-examples.js
+ */
+
+import * as utils from './utils.js'
+
+// all indices are 0-based unless otherwise noted
+// scale degrees are 1-based
+// scales are zero-based, 0-11
+
+/**
+ * Determines location of middle C (default is middle C = 60)
+ * @static
+ */
+const origin = {
+  octave: 4,
+  shift: 12
+}
+
+/**
+ * Map of scale name -> chromatic degrees of scale
+ * @static
+ */
+const scaleChromatics = { Chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }
+
+/**
+ * Number of degrees in western chromatic scale
+ * @static
+ */
+const numChromatics = scaleChromatics.Chromatic.length
+
+/**
+ * Add a named scale to the set of available scales
+ * @param {string} name name of scale
+ * @param {Array.&lt;(string|number)>} degrees list of ascending scale degrees
+ *                   (see {@link module:core.chromatic})
+ * @param {string} relativeScale scale to which *degrees* are relative
+ * @static
+ */
+function addScale (name, degrees, relativeScale = 'Ionian') {
+  const chromaticDegrees = chromatics(degrees, {
+    scale: relativeScale,
+    octave: 0,
+    shift: 0
+  })
+  scaleChromatics[name] = chromaticDegrees
+}
+
+/**
+ * Sets octave which will yield middle C = 60
+ * @param {int} octave the octave for middle C
+ * @static
+ */
+function setOrigin (octave) {
+  origin.octave = octave
+  origin.shift = (5 - octave) * 12
+}
+
+/**
+ * What is the chromatic number for this scale degree?
+ * @param {string|number} degree format is '[#|b]\&lt;int\>', where \&lt;int\> is
+ *                          a 1-based scale degree
+ * @param {Object=} options defaults are {scale='Ionian', octave=origin.octave,
+ *                          shift=origin.shift}
+ * @param {string=} options.scale name of scale to use
+ * @param {number=}    options.octave default octave for notes with no designation
+ * @param {number=}    options.shift an integer used to shift the value up or down
+ *                          on the number line
+ * @returns {number} the chromatic number
+ * @static
+ */
+function chromatic (degree,
+  { scale = 'Ionian', octave = origin.octave, shift = origin.shift } = {}) {
+  //
+  const chromas = scaleChromatics[scale]
+  // let d = parseInt(degree)
+  const { base, offset } = utils.resolveQualifiers(degree)
+  let d = base - 1 // make it zero-based
+  const negativeDegree = (d &lt; 0)
+
+  // figure out octave d is in
+  const dPrev = d
+  const scaleLength = chromas.length
+  d = d % scaleLength
+  if (negativeDegree &amp;&amp; (d !== 0)) {
+    d = scaleLength + d
+  }
+  let dOct = (dPrev - d) / scaleLength
+  if (negativeDegree) {
+    dOct = (d - dPrev) / scaleLength
+    dOct = -dOct
+  }
+  let result = chromas[d]
+  result += offset
+  result += ((octave + dOct) * numChromatics)
+  result += shift
+  return result
+}
+
+/**
+ * What are the chromatic numbers for *degrees* in a given scale?
+ * @param {Array.&lt;(string|int)>}  degrees see {@link module:core.chromatic}
+ * @param {Object=} options see {@link module:core.chromatic}
+ * @returns {number[]} the chromatic numbers
+ * @static
+ */
+function chromatics (degrees, options) {
+  const result = []
+  for (const degree of degrees) {
+    result.push(chromatic(degree, options))
+  }
+  return result
+}
+
+/* ----------------------------  module-private ---------------------------- */
+
+/*
+ * Creates an initial set of scales, including the modes of the major scale
+ */
+function _initialize () {
+  const modeNames = ['Ionian', 'Dorian', 'Phrygian', 'Lydian',
+    'Mixolydian', 'Aeolian', 'Locrian']
+
+  // set up Ionian scale
+  addScale(modeNames[0], [1, 3, 5, 6, 8, 10, 12], 'Chromatic')
+
+  // create modes of the major scale
+  for (let i = 1; i &lt; modeNames.length; i++) {
+    const prev = scaleChromatics[modeNames[i - 1]]
+    const delta = prev[1] - prev[0]
+    const n = prev.length
+    const arr = []
+    for (let j = 1; j &lt; n; j++) {
+      arr.push(prev[j] - delta + 1)
+    }
+    arr.push(prev[0] - delta + 12 + 1)
+    addScale(modeNames[i], arr, 'Chromatic')
+  }
+
+  addScale('Major', [1, 2, 3, 4, 5, 6, 7])
+  addScale('Minor', [1, 2, 'b3', 4, 5, 6, 'b7'])
+  addScale('Harmonic Minor', [1, 2, 'b3', 4, 5, 'b6', 7])
+}
+
+_initialize()
+
+export {
+  origin,
+  scaleChromatics,
+  addScale,
+  setOrigin,
+  chromatic,
+  chromatics
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Mar 19 2021 22:45:20 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

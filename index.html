@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-chords.html">chords</a><ul class='members'><li data-type='member'><a href="module-chords.html#.chordDegrees">chordDegrees</a></li><li data-type='member'><a href="module-chords.html#.nashvilleChordTypes">nashvilleChordTypes</a></li></ul><ul class='methods'><li data-type='method'><a href="module-chords.html#.chordToMidi">chordToMidi</a></li><li data-type='method'><a href="module-chords.html#.degreesToMidi">degreesToMidi</a></li><li data-type='method'><a href="module-chords.html#.nashvilleToMidi">nashvilleToMidi</a></li><li data-type='method'><a href="module-chords.html#.notesToMidi">notesToMidi</a></li></ul></li><li><a href="module-core.html">core</a><ul class='members'><li data-type='member'><a href="module-core.html#.numChromatics">numChromatics</a></li><li data-type='member'><a href="module-core.html#.origin">origin</a></li><li data-type='member'><a href="module-core.html#.scaleChromatics">scaleChromatics</a></li></ul><ul class='methods'><li data-type='method'><a href="module-core.html#.addScale">addScale</a></li><li data-type='method'><a href="module-core.html#.chromatic">chromatic</a></li><li data-type='method'><a href="module-core.html#.chromatics">chromatics</a></li><li data-type='method'><a href="module-core.html#.setOrigin">setOrigin</a></li></ul></li><li><a href="module-utils.html">utils</a><ul class='methods'><li data-type='method'><a href="module-utils.html#.noteIndex">noteIndex</a></li><li data-type='method'><a href="module-utils.html#.parseChord">parseChord</a></li><li data-type='method'><a href="module-utils.html#.parseDegree">parseDegree</a></li><li data-type='method'><a href="module-utils.html#.parseNashvilleChord">parseNashvilleChord</a></li><li data-type='method'><a href="module-utils.html#.parseNote">parseNote</a></li><li data-type='method'><a href="module-utils.html#.resolveQualifiers">resolveQualifiers</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme usertext">
+        <article><p><a href="https://travis-ci.org/billmoser/mustemi"><img src="https://travis-ci.org/billmoser/mustemi.svg?branch=main" alt="Travis CI w/ Logo"></a>
+<a href="https://codecov.io/gh/billmoser/mustemi"><img src="https://codecov.io/gh/billmoser/mustemi/branch/main/graph/badge.svg" alt="CodeCov"></a>
+<a href="https://codebeat.co/projects/github-com-billmoser-mustemi-main"><img src="https://codebeat.co/badges/11522fef-973b-41d8-b1ea-70da1c3cb292" alt="codebeat badge"></a>
+<a href="https://billmoser.github.io/mustemi/"><img src="https://img.shields.io/badge/docs-GHpages-blue.svg" alt="Generic badge"></a>
+<a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat" alt="js-standard-style"></a>
+<a href="https://snyk.io/test/github/billmoser/mustemi?targetFile=package.json"><img src="https://snyk.io/test/github/billmoser/mustemi/badge.svg?targetFile=package.json" alt="Known Vulnerabilities"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a></p>
+<ul>
+<li><a href="#mustemi-music-theory-for-midi-applications">MUSTEMI - MUSic ThEory for MIdi applications</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#basic-examples">Basic Examples</a></li>
+<li><a href="#chord-examples">Chord Examples</a></li>
+<li><a href="#nashville-number-system">Nashville Number System</a></li>
+<li><a href="#midi-examples">MIDI examples</a></li>
+<li><a href="#simple-midi-chord-arpeggiator">Simple MIDI chord arpeggiator</a></li>
+</ul>
+<p><a name="mustemi-music-theory-for-midi-applications"></a></p>
+<h2>MUSTEMI - MUSic ThEory for MIdi applications</h2>
+<p>This package provides the means to produce Midi note numbers from either numeric degrees relative to a given scale, note names (eg 'C', 'Eb'), chord names (eg 'Cm7b5'), or Nashville numbers.  There are examples for each of these given below, as well as a couple of examples of using this package with
+a midi controller and a DAW.  This package can be used both in a node application and in the browser.</p>
+<p><a name="installation"></a></p>
+<h2>Installation</h2>
+<pre class="prettyprint source lang-sh"><code>npm install mustemi
+</code></pre>
+<p><a name="basic-examples"></a></p>
+<h2>Basic Examples</h2>
+<p>These demonstrate how to use the package to produce MIDI note numbers from
+scale degrees.</p>
+<pre class="prettyprint source lang-javascript"><code>import { core } from '../index.js' // you should use: from 'mustemi'
+
+let result
+
+// Set middle C octave.  By default this is 4, but your setup
+// might require it to be 3
+//core.setOrigin(3)
+
+// Chromatic numbers of the major scale
+result = core.scaleChromatics['Ionian']
+console.log('ex 1:', result)
+// &lt;= [ 0, 2, 4, 5, 7, 9, 11 ]
+
+// Chromatic numbers of the 3rd mode mode
+result = core.scaleChromatics['Phrygian']
+console.log('ex 2:', result)
+// &lt;= [ 0, 1, 3, 5, 7, 8, 10 ]
+
+// Chromatics for a dominant 7th chord (relative to major scale),
+// shifted (again by default) so that middle C is 60
+result = core.chromatics([1, 3, 5, 'b7']) // relative scale is Ionian
+console.log('ex 3:', result)
+// &lt;= [ 60, 64, 67, 70 ]
+
+// Result is all 12 notes of  the western scale, starting at middle C
+let degrees = ['1', '#1', '2', 'b3', '3', '4', '#4', '5', 'b6', '6', 'b7', '7']
+result = core.chromatics(degrees, {scale: 'Ionian'})
+console.log('ex 4:', result)
+// &lt;= [ 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ]
+
+</code></pre>
+<p><a name="chord-examples"></a></p>
+<h2>Chord Examples</h2>
+<p>In these examples, you'll see how to do the same for named chords.</p>
+<pre class="prettyprint source lang-javascript"><code>import { chords } from '../index.js' // you should use: from 'mustemi'
+
+let result
+
+// This produces all 12 chromatics using note names rather than scale degrees
+let notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+result = chords.notesToMidi(notes)
+console.log('ex 1:', result)
+// &lt;= [ 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ]
+
+// The default octave is 4, but you can specify other octaves for
+// for individual notes, as in this example
+result = chords.notesToMidi(['C:3', 'D#:2', 'E'])
+console.log('ex 2:', result)
+// &lt;= [ 48, 39, 64 ]
+
+// In addition, you can change the default octave
+result = chords.notesToMidi(['C', 'D#:2', 'E:4'], {defaultOctave: 3})
+console.log('ex 3:', result)
+// &lt;= [ 48, 39, 64 ]
+
+// Here, we produce the midi notes for a C major 7th chord.
+result = chords.chordToMidi({name: 'CM7'})
+console.log('ex 4:', result)
+// &lt;= [ 60, 64, 67, 71 ]
+
+// And here, an Db major chord, in the 5th octave
+result = chords.chordToMidi({name: 'Db:5'})
+console.log('ex 5:', result)
+// &lt;= [ 73, 77, 80 ]
+
+// Most common chord types are supported.
+result = Object.keys(chords.chordDegrees)
+console.log('ex 6:', result)
+// &lt;= [ '7', '', 'M', 'Dom', 'm', '+', 'b5', 'dim', 'aug', 'sus4', 'sus2',
+//      'M6', 'm6', 'Dom7', 'M7', 'm7', 'mM7', '+7', '+M7', 'dim7', '7b5',
+//      'm7b5', 'add9' ]
+
+// If you don't find the one you want, or just want to introduce a
+// shorthand for a particular type of chord, just add it
+// to the 'chordDegrees' object at runtime
+chords.chordDegrees['M7/3rd'] = [-4, 1, 3, 5, 7]
+result = chords.chordToMidi({name: 'CM7/3rd'})
+console.log('ex 7:', result)
+// &lt;= [ 52, 60, 64, 67, 71 ]
+
+</code></pre>
+<p><a name="nashville-number-system"></a></p>
+<h2>Nashville Number System</h2>
+<p>These examples show how to produce MIDI note numbers from Nashville notation.</p>
+<pre class="prettyprint source lang-javascript"><code>import { chords } from '../index.js' // you should use: from 'mustemi'
+
+let result
+
+// You can use the Nashville Number system to specify
+// chords.  The defaults produce 7th chords in the key of C.
+// This gets the midi notes for a CM7 chord in the 3rd octave
+result = chords.nashvilleToMidi({name: 1})
+console.log('ex 1:', result)
+// &lt;= [ 60, 64, 67, 71 ]
+
+// Here's an example producing a C major triad in the 3rd octave
+result = chords.nashvilleToMidi({name: '1:3', scale:'M'})
+console.log('ex 2:', result)
+// &lt;= [ 48, 52, 55 ]
+
+// This produces the notes for the 3 chord of the minor scale.
+// It will be a 7th chord, and key is still C
+result = chords.nashvilleToMidi({name: 3, scale:'m7'})
+console.log('ex 3:', result)
+// &lt;= [ 64, 68, 71, 75 ]
+
+// This produces the notes for the 3 chord of the harmonic minor scale.
+// The Key is now D, and we're producing triads
+result = chords.nashvilleToMidi({name: 3, scale:'hm', key: 'D'})
+console.log('ex 4:', result)
+// &lt;= [ 66, 70, 74 ]
+
+// You can also specify a chord type explicitly.  This will override
+// the default for the scale in use
+result = chords.nashvilleToMidi({name: '2^M7:3', scale:'m7'})
+console.log('ex 5:', result)
+// &lt;= [ 50, 54, 57, 61 ]
+
+</code></pre>
+<p><a name="midi-examples"></a></p>
+<h1>MIDI examples</h1>
+<p>Here's a simple example of using the package to output MIDI for consumption
+by a DAW or some other MIDI-aware sound engine such as Kontakt Player.  This
+uses a few basic midi utilities in the <em>examples</em> directory of this package.
+If you check out this repo so that you can run these MIDI
+examples, you'll need to install the 'midi' package.  It's not listed as a devDependency in package.json,
+because travis-ci can't handle it (it requires a C code-build step).
+Also, your OS will need to have a way to open a virtual MIDI device.  On the platform I'm using, Windows 10, this is made possible by using a 3rd-party tool such as the one I use:
+<a href="https://www.tobias-erichsen.de/software/loopmidi.html">LoopMIDI</a></p>
+<pre class="prettyprint source lang-javascript"><code>import midi from 'midi'
+import * as mu from './midiutils.js'
+import { core, chords } from '../index.js' // you should use: from 'mustemi'
+
+// use this to see what port number you need to open
+mu.showDevices()
+
+// open the output port
+const port = new midi.Output()
+port.openPort(1)
+
+let opts = {
+  start: 0,
+  interval: 200,
+  duration: 150,
+}
+
+var nums, len = 0
+nums = [60,62,64,65,67,69,71]
+len = mu.play(port, nums, {...opts,
+  text: &quot;Ascending C major scale, Raw MIDI&quot;}) 
+
+nums = core.chromatics([8,7,6,5,4,3,2,1])
+len = mu.play(port, nums, {...opts, start: len,
+  text: &quot;Descending Ionian (C major) scale, degrees&quot;})
+
+nums = core.chromatics([1,2,3,4,5,6,7,8,7,6,5,4,3,2,1], {scale: 'Dorian'})
+len = mu.play(port, nums, {...opts, start: len + 200,
+  text: &quot;Dorian scale, degrees&quot;})
+
+
+opts = {
+  start: 0,
+  interval: 50,
+  duration: 150
+}
+
+let names = ['CM7', 'Dm7', 'Em7', 'FM7', 'G7', 'Am7', 'Bm7b5', 'CM7:5']
+for (const i in names) {
+  const name = names[i]
+  nums = chords.chordToMidi({name: name})
+  len = mu.play(port, nums, {...opts, start: len + 200,
+    text: name + ' chord'})
+}
+
+let root = 'D'
+for (let i=1; i&lt;=8; i++) {
+  const name = (i===8)? '1:5': i
+  nums = chords.nashvilleToMidi({name: name, root: root})
+  len = mu.play(port, nums, {...opts, start: len + 200, 
+    text: 'Nashville ' + name + ' chord, ' + root + ' scale'})
+}
+
+</code></pre>
+<p><a name="simple-midi-chord-arpeggiator"></a></p>
+<h1>Simple MIDI chord arpeggiator</h1>
+<p>In this example, we take input from a MIDI keyboard, and output arpeggios rooted at the notes received from the keyboard.</p>
+<pre class="prettyprint source lang-javascript"><code>import midi from 'midi'
+import * as mu from './midiutils.js'
+import { core, chords } from '../index.js' // you should use: from 'mustemi'
+
+// my daw is Ableton, so middle C is in octave 3
+core.setOrigin(3)
+
+// use this to see what port number you need to open
+mu.showDevices()
+
+/*
+ * Open the output port - on my windows box, this is a loopMIDI device.
+ * In my daw, I place a midi instrument on a track, and then set the
+ * track input to this loopMIDI device
+ */
+const port = new midi.Output()
+port.openPort(1)
+
+/*
+ * Set up to read midi note-on messages from the input device, 
+ * and write the transformation (notes object) to the output device
+ */
+let degrees = [1, 3, 5, 7] // degrees for a Majur 7th chord
+let opts = { 
+  start: 0, //start playing when the message is received
+  interval: 100, //  arpeggiate the notes (100 millisecs between them)
+  duration: 150 // duration of each note is 150 milliseconds
+}
+
+// create the midi input object
+const input = new midi.Input()
+
+// when a note is recieved, play an M7 arpeggio rooted at that note
+input.on('message', (deltaTime, message) => {
+  if ((message[0]===144) && (message[2] > 0)) {
+    let midiNoteNumber = message[1]
+    /*
+     * the notes will take the input degrees, and shift them so that
+     * the root is the midiNoteNumber
+     */
+    let notes = chords.degreesToMidi(degrees,
+      {shift: midiNoteNumber, defaultOctave: 0})
+    mu.play(port, notes, {...opts, velocity: message[2],
+      text: 'MIDI note ' + midiNoteNumber})
+  }
+});
+ 
+// open the port associated with the midi keyboard
+input.openPort(4);
+
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Mar 19 2021 22:45:20 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

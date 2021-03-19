@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>utils.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-chords.html">chords</a><ul class='members'><li data-type='member'><a href="module-chords.html#.chordDegrees">chordDegrees</a></li><li data-type='member'><a href="module-chords.html#.nashvilleChordTypes">nashvilleChordTypes</a></li></ul><ul class='methods'><li data-type='method'><a href="module-chords.html#.chordToMidi">chordToMidi</a></li><li data-type='method'><a href="module-chords.html#.degreesToMidi">degreesToMidi</a></li><li data-type='method'><a href="module-chords.html#.nashvilleToMidi">nashvilleToMidi</a></li><li data-type='method'><a href="module-chords.html#.notesToMidi">notesToMidi</a></li></ul></li><li><a href="module-core.html">core</a><ul class='members'><li data-type='member'><a href="module-core.html#.numChromatics">numChromatics</a></li><li data-type='member'><a href="module-core.html#.origin">origin</a></li><li data-type='member'><a href="module-core.html#.scaleChromatics">scaleChromatics</a></li></ul><ul class='methods'><li data-type='method'><a href="module-core.html#.addScale">addScale</a></li><li data-type='method'><a href="module-core.html#.chromatic">chromatic</a></li><li data-type='method'><a href="module-core.html#.chromatics">chromatics</a></li><li data-type='method'><a href="module-core.html#.setOrigin">setOrigin</a></li></ul></li><li><a href="module-utils.html">utils</a><ul class='methods'><li data-type='method'><a href="module-utils.html#.noteIndex">noteIndex</a></li><li data-type='method'><a href="module-utils.html#.parseChord">parseChord</a></li><li data-type='method'><a href="module-utils.html#.parseDegree">parseDegree</a></li><li data-type='method'><a href="module-utils.html#.parseNashvilleChord">parseNashvilleChord</a></li><li data-type='method'><a href="module-utils.html#.parseNote">parseNote</a></li><li data-type='method'><a href="module-utils.html#.resolveQualifiers">resolveQualifiers</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">utils.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This module prodives a few helper functions for the other modules
+ * @module utils
+ */
+
+const sharpNotes = ['B#', 'C#', 'D', 'D#', 'E', 'E#', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+const flatNotes = ['C', 'Db', 'D', 'Eb', 'Fb', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'Cb']
+
+const specs = {
+  note: '(?&lt;note>([A-G]([b#]{0,1})){1})',
+  degree: '(?&lt;degree>[b#]*[0-9]+)',
+  type: '(?&lt;type>([a,c-z,A-Z,0-9,/][a-z,A-Z,0-9,#,/]*){0,1})',
+  nType: '((\\^(?&lt;type>([a,c-z,A-Z,0-9,/][a-z,A-Z,0-9,#,/]*))){0,1})',
+  octave: '((:(?&lt;octave>(-{0,1}[0-9].*))){0,1})',
+  qualifiers: '(?&lt;qualifiers>[b#]*)(?&lt;base>[0-9]+)'
+}
+
+const res = {
+  note: new RegExp(specs.note + specs.octave),
+  degree: new RegExp(specs.degree + specs.octave),
+  chord: new RegExp(specs.note + specs.type + specs.octave),
+  nashvilleChord: new RegExp(specs.degree + specs.nType + specs.octave),
+  qualifiers: new RegExp(specs.qualifiers)
+}
+
+/**
+ * What is chromatic number of a note (such as 'C', 'D#', or 'Ab') in the chromatic scale?
+ * @param {string} note The note to compute the chromatic number of
+ * @returns {number} the integer index into the chromatic scale
+ * @static
+ */
+function noteIndex (note) {
+  let result = sharpNotes.indexOf(note)
+  if (result &lt; 0) result = flatNotes.indexOf(note)
+  return result
+}
+
+/**
+ * Parses a note specification such as 'C#:3' into a *note* and an *octave*
+ * @param {string} spec &lt;note name>[:&lt;octave>]
+ * @returns {Object} the *note* name and the *octave*
+ * @static
+ */
+function parseNote (spec) {
+  const { groups: { note, octave } } = res.note.exec(spec)
+  return { note, octave }
+}
+
+/**
+ * Parses a degree specification such as '1:5' into a *degree* and an *octave*
+ * @param {string|number} spec &lt;degree>[:&lt;octave>]
+ * @returns {Object} the *degree* and the *octave*
+ * @static
+ */
+function parseDegree (spec) {
+  if (Number.isInteger(spec)) return { degree: spec }
+  const { groups: { degree, octave } } = res.degree.exec(spec)
+  return { degree, octave }
+}
+
+/**
+ * Parses a chord specification such as 'C#7b5:3' into an object
+ * @param {string}  spec &lt;note name>[&lt;chord type>][:&lt;octave>]
+ * @returns {Object} *note*: the name of the note, eg 'C#'; *type*:
+ * the chord type, eg '7b5'; and the chord's *octave*
+ * @static
+ */
+function parseChord (spec) {
+  const { groups: { note, type, octave } } = res.chord.exec(spec)
+  return { note, type, octave }
+}
+
+/**
+ * Parse a nashville chord specification such as '1', or '2^M7:3',
+ * or even '#bb##2^dim:5'
+ * @param {string} spec &lt;degree>[^&lt;chord type>][:&lt;octave>]
+ * @returns {Object} *nashNum*: the chord number; *offset*: number
+ *   of half-steps from the chord number determined by the leading sharp/flat
+ *   designators; *type*: the chord type, eg '7b5'; and the chord's *octave*
+ * @static
+ */
+function parseNashvilleChord (spec) {
+  const { groups: { degree, type, octave } } = res.nashvilleChord.exec(spec)
+  const { base: nashNum, offset } = resolveQualifiers(degree)
+  return { nashNum, offset, type, octave }
+}
+
+/**
+ * Resolve a sequence of sharp/flat symbols into an integer *offset* from the
+ * *base* degree.
+ * @param {string} spec [&lt;#/b>...&lt;#/b>]&lt;base>
+ * @returns {Object} the *base and the *offset*
+ * @static
+ */
+function resolveQualifiers (spec) {
+  if (Number.isInteger(spec)) return { base: spec, offset: 0 }
+  // eslint-disable-next-line
+  let { groups: { qualifiers, base } } = res.qualifiers.exec(spec)
+  base = parseInt(base)
+  const offset = (qualifiers.match(/#/g) || []).length -
+    (qualifiers.match(/b/g) || []).length
+  return { base, offset }
+}
+
+export {
+  noteIndex,
+  parseDegree,
+  parseNote,
+  parseChord,
+  parseNashvilleChord,
+  resolveQualifiers
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Fri Mar 19 2021 22:45:20 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
